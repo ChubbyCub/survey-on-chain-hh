@@ -27,14 +27,20 @@ const config: HardhatUserConfig = {
   networks: {
     testnet: {
       url: `https://api.s0.b.hmny.io`,
-      accounts: [`0x${process.env.HARMONY_PRIVATE_KEY}`],
+      accounts:
+        process.env.HARMONY_PK_TEST_NET !== undefined
+          ? [process.env.HARMONY_PK_TEST_NET]
+          : [],
     },
     mainnet: {
       url: `https://api.harmony.one`,
-      accounts: [`0x${process.env.HARMONY_PRIVATE_KEY}`],
+      accounts:
+        process.env.HARMONY_PK_MAIN_NET !== undefined
+          ? [process.env.HARMONY_PK_MAIN_NET]
+          : [],
     },
     hardhat: {
-      chainId: 1337,
+      chainId: 31337,
       allowUnlimitedContractSize: true,
     },
     localhost: {
