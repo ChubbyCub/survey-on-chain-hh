@@ -23,9 +23,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 // Go to https://hardhat.org/config/ to learn more
 
 const config: HardhatUserConfig = {
-  solidity: {
-    version: "0.8.4",
-  },
+  solidity: "0.8.4",
   networks: {
     testnet: {
       url: `https://api.s0.b.hmny.io`,
@@ -35,14 +33,18 @@ const config: HardhatUserConfig = {
       url: `https://api.harmony.one`,
       accounts: [`0x${process.env.HARMONY_PRIVATE_KEY}`],
     },
-    localhost: {
-      url: "http://localhost:8545",
-      allowUnlimitedContractSize: true,
-    },
     hardhat: {
       chainId: 1337,
       allowUnlimitedContractSize: true,
     },
+    localhost: {
+      url: "http://localhost:8545",
+      allowUnlimitedContractSize: true,
+    },
+  },
+  gasReporter: {
+    enabled: process.env.REPORT_GAS !== undefined,
+    currency: "USD",
   },
 };
 
