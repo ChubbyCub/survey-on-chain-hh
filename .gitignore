@@ -3,12 +3,14 @@ node_modules
 coverage
 coverage.json
 typechain
+build
+zkeyFiles
 
 #Hardhat files
 cache
 artifacts
 
 #Contracts
-contracts/Verifier.sol
+contracts/semaphore/Verifier.sol
 deployments/
 exports/

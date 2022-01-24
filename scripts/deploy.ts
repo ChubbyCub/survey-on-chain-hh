@@ -11,11 +11,20 @@ async function main() {
   console.log("Deploying contracts with the account:", deployer.address);
 
   console.log("Account balance:", (await deployer.getBalance()).toString());
+  const depth = 20;
+  const externalNullifier = 1121212;
+  // 0xE09B4d15a1BADB4c019a179478128F9fe74ef454  T3
+  // 0x20B79274b2B25AdD5bF356B5daE59ce0442ce0b1  T6
+  // 0xdEC940115B1Ae966D18B2a08782427fd152Db28A  Semaphore
+  const Semaphore = await ethers.getContractFactory("Semaphore", {
+    libraries: {
+      PoseidonT3: "0xE09B4d15a1BADB4c019a179478128F9fe74ef454",
+      PoseidonT6: "0x20B79274b2B25AdD5bF356B5daE59ce0442ce0b1",
+    },
+  });
+  const semaphore = await Semaphore.deploy(depth, externalNullifier);
 
-  const Token = await ethers.getContractFactory("Token");
-  const token = await Token.deploy();
-
-  console.log("Token address:", token.address);
+  console.log("Semaphore address:", semaphore.address);
 }
 
 main()
