@@ -16,13 +16,14 @@ async function main() {
   // 0xE09B4d15a1BADB4c019a179478128F9fe74ef454  T3
   // 0x20B79274b2B25AdD5bF356B5daE59ce0442ce0b1  T6
   // 0xdEC940115B1Ae966D18B2a08782427fd152Db28A  Semaphore
-  const Semaphore = await ethers.getContractFactory("Semaphore", {
+  // 0x5FbDB2315678afecb367f032d93F642f64180aa3  Utils
+  // 0x5FbDB2315678afecb367f032d93F642f64180aa3  Platform
+  const Semaphore = await ethers.getContractFactory("Platform",{
     libraries: {
-      PoseidonT3: "0xE09B4d15a1BADB4c019a179478128F9fe74ef454",
-      PoseidonT6: "0x20B79274b2B25AdD5bF356B5daE59ce0442ce0b1",
+      Utils: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
     },
   });
-  const semaphore = await Semaphore.deploy(depth, externalNullifier);
+  const semaphore = await Semaphore.deploy();
 
   console.log("Semaphore address:", semaphore.address);
 }
