@@ -53,6 +53,7 @@ contract Platform {
         string calldata _surveyName,
         address _semaphoreAddress
     ) public returns (address) {
+        signInAsSurveyor();
         emit create("Creating survey...");
         Survey newSurvey = surveyFactory.createNewSurvey(
             _surveyQuestions, _participants, 
