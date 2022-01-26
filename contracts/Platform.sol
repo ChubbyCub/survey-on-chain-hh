@@ -24,10 +24,11 @@ contract Platform {
 
     function signInAsSurveyor() public {
         if (surveyResultViews[msg.sender] == SurveyResultsView(address(0))) {
-            console.log("Elise testing logging");
+            console.log("Elise testing loggingsjdflasdfl");
+            console.log("Elise testing logging 2");
             // create one instance of survey result view for a creator
             createSurveyResultView(msg.sender);
-            console.log(address(surveyResultViews[msg.sender]));
+            console.log("Result view address", address(surveyResultViews[msg.sender]));
             emit complete("Completed result view creation.");
         } else {
             console.log("Not creating duplicate view");
@@ -54,21 +55,23 @@ contract Platform {
         address _semaphoreAddress
     ) public returns (address) {
         signInAsSurveyor();
-        emit create("Creating survey...");
+        console.log("About to create new survey...");
         Survey newSurvey = surveyFactory.createNewSurvey(
             _surveyQuestions, _participants, 
             _surveyTimeout, 
             _surveyName,
             _semaphoreAddress
         );
-
+        console.log("Completed creating new survey");
         SurveyResultsView resultsView = surveyResultViews[msg.sender];
+
+        console.log("Adding survey to results view");
         resultsView.addSurvey(newSurvey);
         for (uint i = 0; i < _participants.length; i++) {
             address participant = _participants[i];
             surveyBuffer[participant].push(newSurvey);
         }
-
+        console.log("Completed adding survey to results view");
         return address(newSurvey);
     }
 
@@ -76,7 +79,7 @@ contract Platform {
         emit create("Creating survey result view...");
         SurveyResultsView resultsView = new SurveyResultsView();
         surveyResultViews[surveyor] = resultsView;
-        emit complete("Completed creating survey result view");
+        emit complete("Completed creating survey result views");
     }
 
     function createRespondentView(address participant) private {

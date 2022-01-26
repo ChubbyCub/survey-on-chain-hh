@@ -5,6 +5,7 @@ pragma solidity ^0.8.0;
 import "./semaphore/Semaphore.sol";
 import "./Utils.sol";
 import "./semaphore/Ownable.sol";
+import "hardhat/console.sol";
 
 interface ISemaphore {
     function addExternalNullifier(uint232 _externalNullifier) external;
@@ -50,6 +51,7 @@ contract Survey is Ownable {
         string memory _surveyName,
         address _semaphoreAddress
     ) Ownable() {
+        console.log("Entering constructor for survey...");
         surveyQuestionsWrapper.surveyQuestions = _surveyQuestions;
         for (uint i = 0; i < _surveyQuestions.length; i++) {
             string memory question = _surveyQuestions[i];
@@ -58,11 +60,18 @@ contract Survey is Ownable {
         surveyTimeout = _surveyTimeout;
         surveyCreationTime = block.timestamp;
         // Some hashes might collide because we are downgrading from uint256 to uint232
-        externalNullifier = uint232(uint256(keccak256(abi.encode(address(this)))));
+        console.log("before encoding..............");
+        bytes memory encoded = abi.encode(address(this));
+        console.log("This is encoded address");
+        externalNullifier = uint232(uint256(keccak256(encoded)));
         semaphore = ISemaphore(_semaphoreAddress);
+        console.log("Before calling external nullifiekdkdkd");
         semaphore.addExternalNullifier(externalNullifier);
+        console.log("after external nullifier");
         participants = _participants;
+        console.log("Participants", participants[0]);
         surveyName = _surveyName;
+        console.log("Survey Name", surveyName);
     }
 
     function verifySurveySubmission(string[] memory questions, uint[] memory scores) private view returns (bool) {

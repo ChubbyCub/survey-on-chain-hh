@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "./Verifier.sol";
 import { IncrementalQuinTree } from "./IncrementalMerkleTree.sol";
 import "./Ownable.sol";
+import "hardhat/console.sol";
 
 contract Semaphore is Verifier, Ownable, IncrementalQuinTree {
     // The external nullifier helps to prevent double-signalling by the same
@@ -356,7 +357,8 @@ contract Semaphore is Verifier, Ownable, IncrementalQuinTree {
      */
     function addExternalNullifier(uint232 _externalNullifier) public
     onlyOwner {
-        addEn(_externalNullifier, false);
+        console.log("Semaphore.sol addExternalNullifier");
+        // addEn(_externalNullifier, false);
     }
 
     /*

@@ -11,22 +11,23 @@ async function main() {
   console.log("Deploying contracts with the account:", deployer.address);
 
   console.log("Account balance:", (await deployer.getBalance()).toString());
-  const depth = 20;
-  const externalNullifier = 1121212;
-  // npx hardhat run scripts/deploy.ts --network testnet
-  // 0xE09B4d15a1BADB4c019a179478128F9fe74ef454  T3
-  // 0x20B79274b2B25AdD5bF356B5daE59ce0442ce0b1  T6
-  // 0xdEC940115B1Ae966D18B2a08782427fd152Db28A  Semaphore
-  // 0x427d37a6009342DbcB9175Fd511a6Fdc7A9Fbcf9  Utils
-  // 0x058E9d1aE1ac37Cf942bB85C643A41A053cCDCcF  Platform
-  const Semaphore = await ethers.getContractFactory("Platform", {
-    libraries: {
-      Utils: "0x427d37a6009342DbcB9175Fd511a6Fdc7A9Fbcf9",
-    },
-  });
-  const semaphore = await Semaphore.deploy();
+  // npx hardhat run scripts/Semaphore.ts --network localhost
+  const PoseidonT3 = await ethers.getContractFactory("PoseidonT3");
+  const poseidonT3 = await PoseidonT3.deploy();
+  const PoseidonT6 = await ethers.getContractFactory("PoseidonT6");
+  const poseidonT6 = await PoseidonT6.deploy();
 
-  console.log("Semaphore address:", semaphore.address);
+  const SemaphoreDeployer = await ethers.getContractFactory(
+    "SemaphoreDeployer",
+    {
+      libraries: {
+        PoseidonT3: poseidonT3.address,
+        PoseidonT6: poseidonT6.address,
+      },
+    }
+  );
+  const semaphoreDeployer = await SemaphoreDeployer.deploy();
+  console.log("Semaphore address:", semaphoreDeployer.address);
 }
 
 main()
