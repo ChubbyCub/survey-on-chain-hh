@@ -1,16 +1,21 @@
 import { ethers } from "hardhat";
-
 const { expect } = require("chai");
 
-describe("Token contract", function () {
-  it("Deployment should assign the total supply of tokens to the owner", async function () {
+describe("Platform contract", function () {
+  it("Sign in to platform should create only one result view for surveyor", async function () {
     const [owner] = await ethers.getSigners();
+    const Utils = await ethers.getContractFactory("Utils");
+    const utils = Utils.deploy();
+    const utilsAddress = (await utils).address;
+    const Platform = await ethers.getContractFactory("Platform", {
+      libraries: {
+        Utils: utilsAddress,
+      },
+    });
 
-    const Token = await ethers.getContractFactory("Token");
+    const platform = await Platform.deploy();
 
-    const hardhatToken = await Token.deploy();
-
-    const ownerBalance = await hardhatToken.balanceOf(owner.address);
-    expect(await hardhatToken.totalSupply()).to.equal(ownerBalance);
+    await platform.signInAsSurveyor();
+    await platform.signInAsSurveyor();
   });
 });

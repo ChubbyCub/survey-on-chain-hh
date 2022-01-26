@@ -5,6 +5,7 @@ import "./RespondentView.sol";
 import "./SurveyResultsView.sol";
 import "./SurveyFactory.sol";
 import "./Survey.sol";
+import "hardhat/console.sol";
 
 contract Platform {
     mapping(address => RespondentView) respondentViews;
@@ -23,8 +24,13 @@ contract Platform {
 
     function signInAsSurveyor() public {
         if (surveyResultViews[msg.sender] == SurveyResultsView(address(0))) {
+            console.log("Elise testing logging");
             // create one instance of survey result view for a creator
             createSurveyResultView(msg.sender);
+            console.log(address(surveyResultViews[msg.sender]));
+            emit complete("Completed result view creation.");
+        } else {
+            console.log("Not creating duplicate view");
         }
     }
 
@@ -77,5 +83,9 @@ contract Platform {
         RespondentView respondentView = new RespondentView();
         respondentViews[participant] = respondentView;
         emit complete("Completed creating respondent view");
+    }
+
+    function getSurveyorsResultAddress(address surveyor) public view returns (address) {
+        return address(surveyResultViews[surveyor]);
     }
 }
