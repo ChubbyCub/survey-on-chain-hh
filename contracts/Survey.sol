@@ -7,6 +7,11 @@ import "./Utils.sol";
 import "./semaphore/Ownable.sol";
 import "hardhat/console.sol";
 
+interface ISurvey{
+    function getSurveyScores() external 
+        returns(string[] memory _surveyQuestions, uint[] memory _surveyScores);
+}
+
 interface ISemaphore {
     function addExternalNullifier(uint232 _externalNullifier) external;
     function broadcastSignal(
@@ -15,7 +20,9 @@ interface ISemaphore {
         uint256 _root,
         uint256 _nullifiersHash,
         uint232 _externalNullifier
-    ) external; 
+    ) external;
+    function transferOwnership(address newOwner) external;
+    function insertIdentity(uint256 _identityCommitment) external;
 }
 
 contract Survey is Ownable {
@@ -43,6 +50,11 @@ contract Survey is Ownable {
 
     // control contract to update survey scores only when necessary
     bool shouldUpdateSurveyScores;
+
+    modifier hasSemaphore() {
+        require(semaphore != ISemaphore(address(0)), "must have semaphore");
+        _;
+    }
     
     constructor(
         string[] memory _surveyQuestions, 
@@ -59,19 +71,21 @@ contract Survey is Ownable {
         }
         surveyTimeout = _surveyTimeout;
         surveyCreationTime = block.timestamp;
-        // Some hashes might collide because we are downgrading from uint256 to uint232
-        console.log("before encoding..............");
-        bytes memory encoded = abi.encode(address(this));
-        console.log("This is encoded address");
-        externalNullifier = uint232(uint256(keccak256(encoded)));
         semaphore = ISemaphore(_semaphoreAddress);
-        console.log("Before calling external nullifiekdkdkd");
-        semaphore.addExternalNullifier(externalNullifier);
-        console.log("after external nullifier");
         participants = _participants;
-        console.log("Participants", participants[0]);
         surveyName = _surveyName;
-        console.log("Survey Name", surveyName);
+    }
+
+    function addExternalNullifierAndInsertIdentity() public onlyOwner {
+        console.log("addExternalNullifierAndInsertIdentity start");
+        bytes memory encoded = abi.encode(address(this));
+        externalNullifier = uint232(uint256(keccak256(encoded)));
+        semaphore.addExternalNullifier(externalNullifier);
+        for(uint i = 0; i < participants.length; i++) {
+            uint256 encodedParticipantAddress = uint256(keccak256(abi.encode(participants[i])));
+            semaphore.insertIdentity(encodedParticipantAddress);
+        }
+        console.log("addExternalNullifierAndInsertIdentity finish");
     }
 
     function verifySurveySubmission(string[] memory questions, uint[] memory scores) private view returns (bool) {
@@ -106,7 +120,7 @@ contract Survey is Ownable {
         uint256[8] memory _proof,
         uint256 _root,
         uint256 _nullifiersHash)
-    public {
+    public hasSemaphore {
         require(!verifySurveySubmission(questions, scores), "Submission is incorrect");
         semaphore.broadcastSignal(
             surveyResponseBytes, 
@@ -141,7 +155,7 @@ contract Survey is Ownable {
         shouldUpdateSurveyScores = false;
     }
 
-    function getSurveyScores() public onlyOwner returns(string[] memory _surveyQuestions, uint[] memory _surveyScores) {
+    function getSurveyScores() public onlyOwner hasSemaphore returns(string[] memory _surveyQuestions, uint[] memory _surveyScores) {
         calcAverageScorePerQuestion();
         if (block.timestamp > surveyCreationTime + surveyTimeout) {
             uint[] memory emptySurveyScores;

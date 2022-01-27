@@ -12,6 +12,7 @@ async function main() {
 
   console.log("Account balance:", (await deployer.getBalance()).toString());
   // npx hardhat run scripts/Semaphore.ts --network localhost
+  // 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
   const PoseidonT3 = await ethers.getContractFactory("PoseidonT3");
   const poseidonT3 = await PoseidonT3.deploy();
   const PoseidonT6 = await ethers.getContractFactory("PoseidonT6");

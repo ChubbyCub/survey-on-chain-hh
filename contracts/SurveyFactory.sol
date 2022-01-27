@@ -11,15 +11,21 @@ contract SurveyFactory {
         address[] calldata _participants, 
         uint _surveyTimeout,
         string calldata _surveyName,
-        address _semaphoreAddress
+        address _semaphoreAddress,
+        address _surveyCreatorAddress
     ) public returns (Survey) {
         console.log("In factory...");
-        return new Survey(
+        Survey survey = new Survey(
             _surveyQuestions,
             _participants,
             _surveyTimeout,
             _surveyName,
             _semaphoreAddress
         );
+        // ISemaphore sem = ISemaphore(_semaphoreAddress);
+        survey.transferOwnership(_surveyCreatorAddress);
+        console.log("before set up nullifier");
+        console.log("after set up nullifier");
+        return survey;
     }
 }

@@ -19,7 +19,7 @@ async function main() {
   // 0x802c4CDc73B9A6c3dcAbda428303295f850e9c68  Platform
 
   // Utils address: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
-  // Platform address: 0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0
+  // Platform address: 0xa513E6E4b8f2a923D98304ec87F64353C4D5C853
 
   const Utils = await ethers.getContractFactory("Utils");
   const utils = await Utils.deploy();

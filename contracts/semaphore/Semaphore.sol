@@ -52,7 +52,7 @@ contract Semaphore is Verifier, Ownable, IncrementalQuinTree {
     // not have its preimage and therefore cannot spend funds they do not own.
 
     uint256 public NOTHING_UP_MY_SLEEVE_ZERO = 
-        uint256(keccak256(abi.encodePacked('Semaphore'))) % SNARK_SCALAR_FIELD;
+        uint256(keccak256(abi.encodePacked("Semaphore"))) % SNARK_SCALAR_FIELD;
 
     /*
      * If broadcastSignal is permissioned, check if msg.sender is the contract

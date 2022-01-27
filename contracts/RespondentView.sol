@@ -6,8 +6,8 @@ import "./semaphore/Ownable.sol";
 
 contract RespondentView is Ownable {
     struct RespondentViewWrapper {
-        Survey[] surveys;
-        mapping(Survey => bool) surveyMap;
+        ISurvey[] surveys;
+        mapping(ISurvey => bool) surveyMap;
     }
 
     RespondentViewWrapper respondentViewWrapper;
@@ -38,7 +38,7 @@ contract RespondentView is Ownable {
         emit submit("Called submit survey response");
     }
 
-    function addSurvey(address caller, Survey newSurvey) public onlyOwner {
+    function addSurvey(address caller, ISurvey newSurvey) public onlyOwner {
         respondentViewWrapper.surveys.push(newSurvey);
         respondentViewWrapper.surveyMap[newSurvey] = true;
     }

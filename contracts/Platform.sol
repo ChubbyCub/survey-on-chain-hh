@@ -11,7 +11,7 @@ contract Platform {
     mapping(address => RespondentView) respondentViews;
     mapping(address => SurveyResultsView) surveyResultViews;
 
-    mapping(address => Survey[]) surveyBuffer;
+    mapping(address => ISurvey[]) surveyBuffer;
 
     event create(string message);
     event complete(string message);
@@ -40,39 +40,29 @@ contract Platform {
             // create one instance of respondent view for a participant
             createRespondentView(msg.sender);
         }
-        Survey[] memory surveys = surveyBuffer[msg.sender];
+        ISurvey[] memory surveys = surveyBuffer[msg.sender];
         for (uint i = 0; i < surveys.length; i++) {
             respondentViews[msg.sender].addSurvey(msg.sender, surveys[i]);
         }
         delete surveyBuffer[msg.sender];
     }
 
-    function createSurvey(
-        string[] calldata _surveyQuestions, 
-        address[] calldata _participants, 
-        uint _surveyTimeout,
-        string calldata _surveyName,
-        address _semaphoreAddress
+    // Survey creator add the contract they created to the platform
+    function addExistingSurvey(
+        address[] memory _participants,
+        address newSurveyAddress
     ) public returns (address) {
         signInAsSurveyor();
-        console.log("About to create new survey...");
-        Survey newSurvey = surveyFactory.createNewSurvey(
-            _surveyQuestions, _participants, 
-            _surveyTimeout, 
-            _surveyName,
-            _semaphoreAddress
-        );
-        console.log("Completed creating new survey");
         SurveyResultsView resultsView = surveyResultViews[msg.sender];
 
         console.log("Adding survey to results view");
-        resultsView.addSurvey(newSurvey);
+        resultsView.addSurvey(ISurvey(newSurveyAddress));
         for (uint i = 0; i < _participants.length; i++) {
             address participant = _participants[i];
-            surveyBuffer[participant].push(newSurvey);
+            surveyBuffer[participant].push(ISurvey(newSurveyAddress));
         }
         console.log("Completed adding survey to results view");
-        return address(newSurvey);
+        return address(newSurveyAddress);
     }
 
     function createSurveyResultView(address surveyor) private {
