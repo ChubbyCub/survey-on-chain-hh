@@ -21,16 +21,7 @@ async function main() {
   // Utils address: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
   // Platform address: 0xa513E6E4b8f2a923D98304ec87F64353C4D5C853
 
-  const Utils = await ethers.getContractFactory("Utils");
-  const utils = await Utils.deploy();
-
-  console.log("Utils address:", utils.address);
-
-  const Platform = await ethers.getContractFactory("Platform", {
-    libraries: {
-      Utils: utils.address,
-    },
-  });
+  const Platform = await ethers.getContractFactory("Platform");
   const platform = await Platform.deploy();
 
   console.log("Platform address:", platform.address);

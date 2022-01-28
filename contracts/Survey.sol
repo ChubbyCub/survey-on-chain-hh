@@ -76,16 +76,16 @@ contract Survey is Ownable {
         surveyName = _surveyName;
     }
 
-    function addExternalNullifierAndInsertIdentity() public onlyOwner {
-        console.log("addExternalNullifierAndInsertIdentity start");
+    function addExternalNullifier() public onlyOwner {
         bytes memory encoded = abi.encode(address(this));
         externalNullifier = uint232(uint256(keccak256(encoded)));
         semaphore.addExternalNullifier(externalNullifier);
-        for(uint i = 0; i < participants.length; i++) {
-            uint256 encodedParticipantAddress = uint256(keccak256(abi.encode(participants[i])));
-            semaphore.insertIdentity(encodedParticipantAddress);
-        }
-        console.log("addExternalNullifierAndInsertIdentity finish");
+    }
+
+    function insertIdentity(uint256 _identityCommitment) public {
+        console.log("Survey:start insert identity");
+        semaphore.insertIdentity(_identityCommitment);
+        console.log("Survey:complete insert identity");
     }
 
     function verifySurveySubmission(string[] memory questions, uint[] memory scores) private view returns (bool) {

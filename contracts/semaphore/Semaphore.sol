@@ -93,7 +93,7 @@ contract Semaphore is Verifier, Ownable, IncrementalQuinTree {
             _identityCommitment != NOTHING_UP_MY_SLEEVE_ZERO,
             "can't be nothing-up-my-sleeve-value"
         );
-
+        
         return insertLeaf(_identityCommitment);
     }
 
@@ -357,8 +357,9 @@ contract Semaphore is Verifier, Ownable, IncrementalQuinTree {
      */
     function addExternalNullifier(uint232 _externalNullifier) public
     onlyOwner {
-        console.log("Semaphore.sol addExternalNullifier");
-        // addEn(_externalNullifier, false);
+        console.log("Semaphore:addExternalNullifier");
+        addEn(_externalNullifier, false);
+        console.log("Semaphore:completeAddExternalNullifier");
     }
 
     /*
