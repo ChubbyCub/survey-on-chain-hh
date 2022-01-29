@@ -7,39 +7,39 @@ import "./semaphore/Ownable.sol";
 contract RespondentView is Ownable {
     struct RespondentViewWrapper {
         ISurvey[] surveys;
+        string[] surveyNames;
         mapping(ISurvey => bool) surveyMap;
     }
 
     RespondentViewWrapper respondentViewWrapper;
 
-    constructor() Ownable() {}
+    address respondentAddress;
 
-    event surveyNames(
-        string message
-    );
+    constructor(address _respondentAddress) Ownable() {
+        respondentAddress = _respondentAddress;
+    }
 
-    event open(
-        string message
-    );
-    
-    event submit(
-        string message
-    );
+    function getSurveyNames() public view returns (string[] memory) {
+        require(msg.sender == respondentAddress, "Only participant can view survey names");
+        return respondentViewWrapper.surveyNames;
+    }
 
-    function getSurveyNames() public {
-        emit surveyNames("Called get survey names");
+    function getAllSurveyAddresses() public view returns (ISurvey[] memory) {
+        require(msg.sender == respondentAddress, "Only participant can view survey addresses");
+        return respondentViewWrapper.surveys;
     }
 
     function openSurvey(address surveyAddress, uint256 identityCommitment) public {
-        emit open("Called open survey");
+        require(msg.sender == respondentAddress, "Only participant can open survey instance");
     }
 
     function submitSurveyResponse() public {
-        emit submit("Called submit survey response");
+        require(msg.sender == respondentAddress, "Only participant can submit survey response");
     }
 
-    function addSurvey(address caller, ISurvey newSurvey) public onlyOwner {
+    function addSurvey(ISurvey newSurvey) public onlyOwner {
         respondentViewWrapper.surveys.push(newSurvey);
         respondentViewWrapper.surveyMap[newSurvey] = true;
+        respondentViewWrapper.surveyNames.push(newSurvey.getSurveyName());
     }
 }

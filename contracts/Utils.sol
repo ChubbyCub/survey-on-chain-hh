@@ -9,4 +9,13 @@ library Utils {
             sum_ += _array[i];
         }
     }
+
+    function arrayContains(address[] memory _array, address _element) internal pure returns(bool) {
+        for (uint i = 0; i < _array.length; i++) {
+            if (_element == _array[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

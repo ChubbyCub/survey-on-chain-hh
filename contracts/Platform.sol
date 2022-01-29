@@ -42,7 +42,7 @@ contract Platform {
         }
         ISurvey[] memory surveys = surveyBuffer[msg.sender];
         for (uint i = 0; i < surveys.length; i++) {
-            respondentViews[msg.sender].addSurvey(msg.sender, surveys[i]);
+            respondentViews[msg.sender].addSurvey(surveys[i]);
         }
         delete surveyBuffer[msg.sender];
     }
@@ -74,12 +74,16 @@ contract Platform {
 
     function createRespondentView(address participant) private {
         emit create("Creating respondent view...");
-        RespondentView respondentView = new RespondentView();
+        RespondentView respondentView = new RespondentView(participant);
         respondentViews[participant] = respondentView;
         emit complete("Completed creating respondent view");
     }
 
-    function getSurveyorsResultAddress(address surveyor) public view returns (address) {
-        return address(surveyResultViews[surveyor]);
+    function getSurveyorsResultAddress() public view returns (address) {
+        return address(surveyResultViews[msg.sender]);
+    }
+
+    function getRespondentViewAddress() public view returns (address) {
+        return address(respondentViews[msg.sender]);
     }
 }

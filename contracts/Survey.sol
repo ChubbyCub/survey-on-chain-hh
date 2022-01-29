@@ -10,6 +10,7 @@ import "hardhat/console.sol";
 interface ISurvey{
     function getSurveyScores() external 
         returns(string[] memory _surveyQuestions, uint[] memory _surveyScores);
+    function getSurveyName() external returns (string memory);
 }
 
 interface ISemaphore {
@@ -83,6 +84,8 @@ contract Survey is Ownable {
     }
 
     function insertIdentity(uint256 _identityCommitment) public {
+        require(Utils.arrayContains(participants, msg.sender), 
+            "Only participants can insert identity");
         console.log("Survey:start insert identity");
         semaphore.insertIdentity(_identityCommitment);
         console.log("Survey:complete insert identity");
@@ -167,5 +170,9 @@ contract Survey is Ownable {
     // Will be updated to only allow permitted users to see survey questions
     function getSurveyQuestions() public view returns (string[] memory)  {
         return surveyQuestionsWrapper.surveyQuestions;
+    }
+
+    function getSurveyName() public view returns (string memory) {
+        return surveyName;
     }
 }
