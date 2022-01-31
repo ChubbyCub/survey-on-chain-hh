@@ -242,6 +242,7 @@ contract Semaphore is Verifier, Ownable, IncrementalQuinTree {
         // Check whether each element in _proof is a valid field element. Even
         // if verifier.sol does this check too, it is good to do so here for
         // the sake of good protocol design.
+        console.log("isValidSignalAndProof", _externalNullifier);
         require(
             areAllValidFieldElements(_proof),
             "invalid field element in proof"
@@ -310,7 +311,6 @@ contract Semaphore is Verifier, Ownable, IncrementalQuinTree {
     {
         // Client contracts should be responsible for storing the signal and/or
         // emitting it as an event 
-
         // Store the nullifiers hash to prevent double-signalling
         nullifierHashHistory[_nullifiersHash] = true;
     }
@@ -336,7 +336,7 @@ contract Semaphore is Verifier, Ownable, IncrementalQuinTree {
             externalNullifierLinkedList[lastExternalNullifier].next =
                 _externalNullifier;
         }
-
+        console.log("addEn", _externalNullifier);
         // Add a new external nullifier
         externalNullifierLinkedList[_externalNullifier].next = 0;
         externalNullifierLinkedList[_externalNullifier].isActive = true;
@@ -419,6 +419,7 @@ contract Semaphore is Verifier, Ownable, IncrementalQuinTree {
      */
     function isExternalNullifierActive(uint232 _externalNullifier) public view
     returns (bool) {
+        console.log("isExternalNullifierActive", _externalNullifier);
         return externalNullifierLinkedList[_externalNullifier].isActive;
     }
 

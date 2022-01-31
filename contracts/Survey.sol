@@ -52,6 +52,10 @@ contract Survey is Ownable {
     // control contract to update survey scores only when necessary
     bool shouldUpdateSurveyScores;
 
+    uint256[] identityCommitments;
+
+    mapping(address => bool) trackParticipationMap;
+
     modifier hasSemaphore() {
         require(semaphore != ISemaphore(address(0)), "must have semaphore");
         _;
@@ -81,13 +85,20 @@ contract Survey is Ownable {
         bytes memory encoded = abi.encode(address(this));
         externalNullifier = uint232(uint256(keccak256(encoded)));
         semaphore.addExternalNullifier(externalNullifier);
+        console.log("Survey:Adding external nullifier: ", externalNullifier);
     }
 
     function insertIdentity(uint256 _identityCommitment) public {
         require(Utils.arrayContains(participants, msg.sender), 
             "Only participants can insert identity");
+        // require(trackParticipationMap[msg.sender] == false, 
+        //    "Participant can only insert identity once");
         console.log("Survey:start insert identity");
         semaphore.insertIdentity(_identityCommitment);
+        identityCommitments.push(_identityCommitment);
+        trackParticipationMap[msg.sender] = true;
+        uint numCommitments = identityCommitments.length;
+        console.log("Number of commitments in survey", numCommitments);
         console.log("Survey:complete insert identity");
     }
 
@@ -124,7 +135,8 @@ contract Survey is Ownable {
         uint256 _root,
         uint256 _nullifiersHash)
     public hasSemaphore {
-        require(!verifySurveySubmission(questions, scores), "Submission is incorrect");
+        //require(!verifySurveySubmission(questions, scores), "Submission is incorrect");
+        console.log("Survey:external nullifier in update survey result: ", externalNullifier);
         semaphore.broadcastSignal(
             surveyResponseBytes, 
             _proof, 
@@ -132,13 +144,13 @@ contract Survey is Ownable {
             _nullifiersHash, 
             externalNullifier
         );
-        numRespondents++;
-        for(uint i = 0; i < surveyQuestionsWrapper.surveyQuestions.length; i++) {
-            string memory question = surveyQuestionsWrapper.surveyQuestions[i];
-            uint score = scores[i];
-            questionToScoreList[question].push(score);
-        }
-        shouldUpdateSurveyScores = true;
+        // numRespondents++;
+        // for(uint i = 0; i < surveyQuestionsWrapper.surveyQuestions.length; i++) {
+        //     string memory question = surveyQuestionsWrapper.surveyQuestions[i];
+        //     uint score = scores[i];
+        //     questionToScoreList[question].push(score);
+        // }
+        // shouldUpdateSurveyScores = true;
     }
 
     // This function will be used to retrieve results
@@ -174,5 +186,13 @@ contract Survey is Ownable {
 
     function getSurveyName() public view returns (string memory) {
         return surveyName;
+    }
+
+    function getIdentityCommitments() public view returns (uint256[] memory) {
+        return identityCommitments;
+    }
+
+    function getExternalNullifier() public view returns (uint232) {
+        return externalNullifier;
     }
 }

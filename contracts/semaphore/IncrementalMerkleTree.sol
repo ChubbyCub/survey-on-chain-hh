@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import { SnarkConstants } from "./SnarkConstants.sol";
 import { Hasher } from "./Hasher.sol";
 import { Ownable } from "./Ownable.sol";
+import "hardhat/console.sol";
 
 /*
  * An incremental Merkle tree which supports up to 5 leaves per node.
@@ -98,7 +99,7 @@ contract IncrementalQuinTree is Ownable, Hasher {
             nextLeafIndex < uint256(LEAVES_PER_NODE) ** uint256(treeLevels),
             "IncrementalQuinTree: tree is full"
         );
-
+        console.log("insertLeaf", _leaf);
         uint256 currentIndex = nextLeafIndex;
 
         uint256 currentLevelHash = _leaf;
@@ -134,6 +135,7 @@ contract IncrementalQuinTree is Ownable, Hasher {
         }
 
         root = currentLevelHash;
+        console.log("incrementalMerkleTree root:", root);
         rootHistory[root] = true; 
 
 
