@@ -2,11 +2,11 @@
 pragma solidity ^0.8.0;
 
 import "./Verifier.sol";
-import { IncrementalQuinTree } from "./IncrementalMerkleTree.sol";
+import { IncrementalMerkleTree } from "./IncrementalMerkleTree.sol";
 import "./Ownable.sol";
 import "hardhat/console.sol";
 
-contract Semaphore is Verifier, Ownable, IncrementalQuinTree {
+contract Semaphore is Verifier, Ownable, IncrementalMerkleTree {
     // The external nullifier helps to prevent double-signalling by the same
     // user. An external nullifier can be active or deactivated.
 
@@ -72,7 +72,7 @@ contract Semaphore is Verifier, Ownable, IncrementalQuinTree {
      * @param _firstExternalNullifier The first identity nullifier to add.
      */
     constructor(uint8 _treeLevels, uint232 _firstExternalNullifier)
-        IncrementalQuinTree(_treeLevels, NOTHING_UP_MY_SLEEVE_ZERO)
+        IncrementalMerkleTree(_treeLevels, NOTHING_UP_MY_SLEEVE_ZERO)
         Ownable()
         {
             addEn(_firstExternalNullifier, true);
