@@ -105,15 +105,18 @@ contract Survey is Ownable {
     function verifySurveySubmission(string[] memory questions, uint[] memory scores) private view returns (bool) {
         // check that the response size is equal to the number of questions
         if (questions.length != surveyQuestionsWrapper.surveyQuestions.length) {
+            console.log("In the first if statement");
             return false;
         }
         if (scores.length != surveyQuestionsWrapper.surveyQuestions.length) {
+            console.log("In the second if statement");
             return false;
         }
         // check that the responded questions are in the list of survey questions
         for (uint i = 0; i < questions.length; i++) {
             string memory question = questions[i];
             if (!surveyQuestionsWrapper.surveyQuestionsMap[question]) {
+                console.log("In the third if statement");
                 return false;
             }
         }
@@ -135,7 +138,7 @@ contract Survey is Ownable {
         uint256 _root,
         uint256 _nullifiersHash)
     public hasSemaphore {
-        //require(!verifySurveySubmission(questions, scores), "Submission is incorrect");
+        require(verifySurveySubmission(questions, scores), "Submission is incorrect");
         console.log("Survey:external nullifier in update survey result: ", externalNullifier);
         semaphore.broadcastSignal(
             surveyResponseBytes, 
@@ -144,13 +147,13 @@ contract Survey is Ownable {
             _nullifiersHash, 
             externalNullifier
         );
-        // numRespondents++;
-        // for(uint i = 0; i < surveyQuestionsWrapper.surveyQuestions.length; i++) {
-        //     string memory question = surveyQuestionsWrapper.surveyQuestions[i];
-        //     uint score = scores[i];
-        //     questionToScoreList[question].push(score);
-        // }
-        // shouldUpdateSurveyScores = true;
+        numRespondents++;
+        for(uint i = 0; i < surveyQuestionsWrapper.surveyQuestions.length; i++) {
+            string memory question = surveyQuestionsWrapper.surveyQuestions[i];
+            uint score = scores[i];
+            questionToScoreList[question].push(score);
+        }
+        shouldUpdateSurveyScores = true;
     }
 
     // This function will be used to retrieve results

@@ -29,7 +29,6 @@ contract Platform {
             // create one instance of survey result view for a creator
             createSurveyResultView(msg.sender);
             console.log("Result view address", address(surveyResultViews[msg.sender]));
-            emit complete("Completed result view creation.");
         } else {
             console.log("Not creating duplicate view");
         }
@@ -66,17 +65,13 @@ contract Platform {
     }
 
     function createSurveyResultView(address surveyor) private {
-        emit create("Creating survey result view...");
         SurveyResultsView resultsView = new SurveyResultsView();
         surveyResultViews[surveyor] = resultsView;
-        emit complete("Completed creating survey result views");
     }
 
     function createRespondentView(address participant) private {
-        emit create("Creating respondent view...");
         RespondentView respondentView = new RespondentView(participant);
         respondentViews[participant] = respondentView;
-        emit complete("Completed creating respondent view");
     }
 
     function getSurveyorsResultAddress() public view returns (address) {
