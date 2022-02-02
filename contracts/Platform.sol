@@ -3,7 +3,6 @@
 pragma solidity >=0.8.0 <0.9.0;
 import "./RespondentView.sol";
 import "./SurveyResultsView.sol";
-import "./SurveyFactory.sol";
 import "./Survey.sol";
 import "hardhat/console.sol";
 
@@ -15,12 +14,6 @@ contract Platform {
 
     event create(string message);
     event complete(string message);
-
-    SurveyFactory surveyFactory;
-
-    constructor() {
-        surveyFactory = new SurveyFactory();
-    }
 
     function signInAsSurveyor() public {
         if (surveyResultViews[msg.sender] == SurveyResultsView(address(0))) {

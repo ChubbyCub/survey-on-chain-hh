@@ -91,8 +91,8 @@ contract Survey is Ownable {
     function insertIdentity(uint256 _identityCommitment) public {
         require(Utils.arrayContains(participants, msg.sender), 
             "Only participants can insert identity");
-        // require(trackParticipationMap[msg.sender] == false, 
-        //    "Participant can only insert identity once");
+        require(trackParticipationMap[msg.sender] == false, 
+           "Participant can only insert identity once");
         console.log("Survey:start insert identity");
         semaphore.insertIdentity(_identityCommitment);
         identityCommitments.push(_identityCommitment);
@@ -100,6 +100,10 @@ contract Survey is Ownable {
         uint numCommitments = identityCommitments.length;
         console.log("Number of commitments in survey", numCommitments);
         console.log("Survey:complete insert identity");
+    }
+
+    function checkInsertIdentityStatus() public view returns (bool) {
+        return trackParticipationMap[msg.sender];
     }
 
     function verifySurveySubmission(string[] memory questions, uint[] memory scores) private view returns (bool) {
