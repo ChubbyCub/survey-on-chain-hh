@@ -21,13 +21,13 @@ contract SurveyResultsView is Ownable {
     }
     
     // Retrieves all survey results
-    function getAllSurveys(address _surveyor) public view returns (string[] memory) {
-        require(surveyor == _surveyor, "Only surveyors can view surveys");
+    function getAllSurveys() public view returns (string[] memory) {
+        require(surveyor == msg.sender, "Only surveyors can view surveys");
         return surveyResultsWrapper.surveyNames;
     }
 
-    function getAllSurveyAddresses(address _surveyor) public view returns (ISurvey[] memory) {
-        require(surveyor == _surveyor, "Only surveyors can view surveys");
+    function getAllSurveyAddresses() public view returns (ISurvey[] memory) {
+        require(surveyor == msg.sender, "Only surveyors can view surveys");
         return surveyResultsWrapper.surveys;
     }
 

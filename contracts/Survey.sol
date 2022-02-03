@@ -157,7 +157,7 @@ contract Survey is Ownable {
     }
 
     // This function will be used to retrieve results
-    function calcAverageScorePerQuestion() private {
+    function calcAverageScorePerQuestion() public {
         if (!shouldUpdateSurveyScores) {
             console.log("Do not need to update survey score");
             return;
