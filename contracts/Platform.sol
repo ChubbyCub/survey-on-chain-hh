@@ -17,8 +17,6 @@ contract Platform {
 
     function signInAsSurveyor() public {
         if (surveyResultViews[msg.sender] == SurveyResultsView(address(0))) {
-            console.log("Elise testing loggingsjdflasdfl");
-            console.log("Elise testing logging 2");
             // create one instance of survey result view for a creator
             createSurveyResultView(msg.sender);
             console.log("Result view address", address(surveyResultViews[msg.sender]));
@@ -58,7 +56,7 @@ contract Platform {
     }
 
     function createSurveyResultView(address surveyor) private {
-        SurveyResultsView resultsView = new SurveyResultsView();
+        SurveyResultsView resultsView = new SurveyResultsView(surveyor);
         surveyResultViews[surveyor] = resultsView;
     }
 

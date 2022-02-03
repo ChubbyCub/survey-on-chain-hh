@@ -9,33 +9,31 @@ contract SurveyResultsView is Ownable {
 
     struct SurveyResultsWrapper {
         ISurvey[] surveys;
+        string[] surveyNames;
         mapping(ISurvey => bool) surveyMap;
-        mapping(ISurvey => uint) surveyIndices;
     }
 
     SurveyResultsWrapper surveyResultsWrapper;
-    uint currSurvey;
+    address surveyor;
 
-    constructor() {
-        currSurvey = 0;
-    }
-
-    function openSurveyResults(ISurvey _survey) public onlyOwner returns (string[] memory surveyQuestions, uint[] memory surveyScores) {
-        require(surveyResultsWrapper.surveyMap[_survey], "Survey does not exist");
-
-        uint surveyIndex = surveyResultsWrapper.surveyIndices[_survey];
-        return surveyResultsWrapper.surveys[surveyIndex].getSurveyScores();
+    constructor(address _surveyor) {
+        surveyor = _surveyor;
     }
     
     // Retrieves all survey results
-    function getAllSurveys() public view onlyOwner returns (ISurvey[] memory ) {
+    function getAllSurveys(address _surveyor) public view returns (string[] memory) {
+        require(surveyor == _surveyor, "Only surveyors can view surveys");
+        return surveyResultsWrapper.surveyNames;
+    }
+
+    function getAllSurveyAddresses(address _surveyor) public view returns (ISurvey[] memory) {
+        require(surveyor == _surveyor, "Only surveyors can view surveys");
         return surveyResultsWrapper.surveys;
     }
 
     function addSurvey(ISurvey newSurvey) public onlyOwner {
         surveyResultsWrapper.surveys.push(newSurvey);
+        surveyResultsWrapper.surveyNames.push(newSurvey.getSurveyName());
         surveyResultsWrapper.surveyMap[newSurvey] = true;
-        surveyResultsWrapper.surveyIndices[newSurvey] = currSurvey;
-        currSurvey++;
     }
 }

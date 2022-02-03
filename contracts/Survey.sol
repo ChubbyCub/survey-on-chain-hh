@@ -40,8 +40,6 @@ contract Survey is Ownable {
     ISemaphore semaphore;
 
     uint232 externalNullifier;
-    uint surveyCreationTime;
-    uint surveyTimeout;
     address[] participants;
     // stores all response scores in a map
     mapping(string => uint[]) private questionToScoreList;
@@ -63,8 +61,7 @@ contract Survey is Ownable {
     
     constructor(
         string[] memory _surveyQuestions, 
-        address[] memory _participants, 
-        uint _surveyTimeout,
+        address[] memory _participants,
         string memory _surveyName,
         address _semaphoreAddress
     ) Ownable() {
@@ -74,11 +71,10 @@ contract Survey is Ownable {
             string memory question = _surveyQuestions[i];
             surveyQuestionsWrapper.surveyQuestionsMap[question] = true;
         }
-        surveyTimeout = _surveyTimeout;
-        surveyCreationTime = block.timestamp;
         semaphore = ISemaphore(_semaphoreAddress);
         participants = _participants;
         surveyName = _surveyName;
+        shouldUpdateSurveyScores = false;
     }
 
     function addExternalNullifier() public onlyOwner {
@@ -162,7 +158,8 @@ contract Survey is Ownable {
 
     // This function will be used to retrieve results
     function calcAverageScorePerQuestion() private {
-        if (!shouldUpdateSurveyScores || block.timestamp > surveyCreationTime + surveyTimeout) {
+        if (!shouldUpdateSurveyScores) {
+            console.log("Do not need to update survey score");
             return;
         }
         // remove all average scores stored in array
@@ -174,15 +171,11 @@ contract Survey is Ownable {
             uint averageScore = Utils.getArraySum(questionToScoreList[question]) / numRespondents;
             surveyScores.push(averageScore);
         }
+        console.log("Complete updating survey score");
         shouldUpdateSurveyScores = false;
     }
 
-    function getSurveyScores() public onlyOwner hasSemaphore returns(string[] memory _surveyQuestions, uint[] memory _surveyScores) {
-        calcAverageScorePerQuestion();
-        if (block.timestamp > surveyCreationTime + surveyTimeout) {
-            uint[] memory emptySurveyScores;
-            return (surveyQuestionsWrapper.surveyQuestions, emptySurveyScores);
-        }
+    function getSurveyScores() public view onlyOwner hasSemaphore returns(string[] memory _surveyQuestions, uint[] memory _surveyScores) {
         return (surveyQuestionsWrapper.surveyQuestions, surveyScores);
     }
 
