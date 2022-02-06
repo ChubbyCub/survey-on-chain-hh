@@ -5,7 +5,7 @@ library MiMCHasher {
 
     function MiMCSponge(
         uint in_xL, uint in_xR
-    ) internal pure returns (uint xL, uint xR) {
+    ) public pure returns (uint xL, uint xR) {
         unchecked { assembly {
             let _xL := in_xL
             let _xR := in_xR

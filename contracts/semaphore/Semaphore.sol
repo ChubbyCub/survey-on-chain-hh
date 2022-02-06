@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 import "./Verifier.sol";
 import { IncrementalMerkleTree } from "./IncrementalMerkleTree.sol";
 import "./Ownable.sol";
-import "hardhat/console.sol";
 
 contract Semaphore is Verifier, Ownable, IncrementalMerkleTree {
     // The external nullifier helps to prevent double-signalling by the same
@@ -86,7 +85,7 @@ contract Semaphore is Verifier, Ownable, IncrementalMerkleTree {
      *                            be the output of a Pedersen hash. It is the
      *                            responsibility of the caller to verify this.
      */
-    function insertIdentity(uint256 _identityCommitment) public onlyOwner
+    function insertIdentity(uint256 _identityCommitment) public
     returns (uint256) {
         // Ensure that the given identity commitment is not the zero value
         require(
@@ -242,7 +241,6 @@ contract Semaphore is Verifier, Ownable, IncrementalMerkleTree {
         // Check whether each element in _proof is a valid field element. Even
         // if verifier.sol does this check too, it is good to do so here for
         // the sake of good protocol design.
-        console.log("isValidSignalAndProof", _externalNullifier);
         require(
             areAllValidFieldElements(_proof),
             "invalid field element in proof"
@@ -336,7 +334,6 @@ contract Semaphore is Verifier, Ownable, IncrementalMerkleTree {
             externalNullifierLinkedList[lastExternalNullifier].next =
                 _externalNullifier;
         }
-        console.log("addEn", _externalNullifier);
         // Add a new external nullifier
         externalNullifierLinkedList[_externalNullifier].next = 0;
         externalNullifierLinkedList[_externalNullifier].isActive = true;
@@ -356,10 +353,8 @@ contract Semaphore is Verifier, Ownable, IncrementalMerkleTree {
      * @param _externalNullifier The new external nullifier to set.
      */
     function addExternalNullifier(uint232 _externalNullifier) public
-    onlyOwner {
-        console.log("Semaphore:addExternalNullifier");
+    {
         addEn(_externalNullifier, false);
-        console.log("Semaphore:completeAddExternalNullifier");
     }
 
     /*
@@ -368,7 +363,7 @@ contract Semaphore is Verifier, Ownable, IncrementalMerkleTree {
      * @param _externalNullifier The new external nullifier to deactivate.
      */
     function deactivateExternalNullifier(uint232 _externalNullifier) public
-    onlyOwner {
+    {
         // The external nullifier must already exist
         require(
             externalNullifierLinkedList[_externalNullifier].exists,
@@ -394,7 +389,7 @@ contract Semaphore is Verifier, Ownable, IncrementalMerkleTree {
      * @param _externalNullifier The new external nullifier to reactivate.
      */
     function reactivateExternalNullifier(uint232 _externalNullifier) public
-    onlyOwner {
+    {
         // The external nullifier must already exist
         require(
             externalNullifierLinkedList[_externalNullifier].exists,
@@ -419,7 +414,6 @@ contract Semaphore is Verifier, Ownable, IncrementalMerkleTree {
      */
     function isExternalNullifierActive(uint232 _externalNullifier) public view
     returns (bool) {
-        console.log("isExternalNullifierActive", _externalNullifier);
         return externalNullifierLinkedList[_externalNullifier].isActive;
     }
 
@@ -460,7 +454,7 @@ contract Semaphore is Verifier, Ownable, IncrementalMerkleTree {
      * @param _newPermission True if the broadcastSignal can only be called by
      *                       the contract owner; and False otherwise.
      */
-    function setPermissioning(bool _newPermission) public onlyOwner {
+    function setPermissioning(bool _newPermission) public {
 
       isBroadcastPermissioned = _newPermission;
 

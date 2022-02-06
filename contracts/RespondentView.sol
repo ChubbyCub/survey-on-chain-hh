@@ -20,24 +20,24 @@ contract RespondentView is Ownable {
     }
 
     function getSurveyNames() public view returns (string[] memory) {
-        require(msg.sender == respondentAddress, "Only participant can view survey names");
+        // require(msg.sender == respondentAddress, "Only participant can view survey names");
         return respondentViewWrapper.surveyNames;
     }
 
     function getAllSurveyAddresses() public view returns (ISurvey[] memory) {
-        require(msg.sender == respondentAddress, "Only participant can view survey addresses");
+        // require(msg.sender == respondentAddress, "Only participant can view survey addresses");
         return respondentViewWrapper.surveys;
     }
 
     function openSurvey(address surveyAddress, uint256 identityCommitment) public {
-        require(msg.sender == respondentAddress, "Only participant can open survey instance");
+        // require(msg.sender == respondentAddress, "Only participant can open survey instance");
     }
 
     function submitSurveyResponse() public {
-        require(msg.sender == respondentAddress, "Only participant can submit survey response");
+        // require(msg.sender == respondentAddress, "Only participant can submit survey response");
     }
 
-    function addSurvey(ISurvey newSurvey) public onlyOwner {
+    function addSurvey(ISurvey newSurvey) public {
         respondentViewWrapper.surveys.push(newSurvey);
         respondentViewWrapper.surveyMap[newSurvey] = true;
         respondentViewWrapper.surveyNames.push(newSurvey.getSurveyName());

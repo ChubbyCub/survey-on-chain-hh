@@ -65,7 +65,6 @@ contract Survey is Ownable {
         string memory _surveyName,
         address _semaphoreAddress
     ) Ownable() {
-        console.log("Entering constructor for survey...");
         surveyQuestionsWrapper.surveyQuestions = _surveyQuestions;
         for (uint i = 0; i < _surveyQuestions.length; i++) {
             string memory question = _surveyQuestions[i];
@@ -77,11 +76,10 @@ contract Survey is Ownable {
         shouldUpdateSurveyScores = false;
     }
 
-    function addExternalNullifier() public onlyOwner {
+    function addExternalNullifier() public {
         bytes memory encoded = abi.encode(address(this));
         externalNullifier = uint232(uint256(keccak256(encoded)));
         semaphore.addExternalNullifier(externalNullifier);
-        console.log("Survey:Adding external nullifier: ", externalNullifier);
     }
 
     function insertIdentity(uint256 _identityCommitment) public {
@@ -89,13 +87,10 @@ contract Survey is Ownable {
             "Only participants can insert identity");
         require(trackParticipationMap[msg.sender] == false, 
            "Participant can only insert identity once");
-        console.log("Survey:start insert identity");
         semaphore.insertIdentity(_identityCommitment);
         identityCommitments.push(_identityCommitment);
         trackParticipationMap[msg.sender] = true;
         uint numCommitments = identityCommitments.length;
-        console.log("Number of commitments in survey", numCommitments);
-        console.log("Survey:complete insert identity");
     }
 
     function checkInsertIdentityStatus() public view returns (bool) {
@@ -105,18 +100,15 @@ contract Survey is Ownable {
     function verifySurveySubmission(string[] memory questions, uint[] memory scores) private view returns (bool) {
         // check that the response size is equal to the number of questions
         if (questions.length != surveyQuestionsWrapper.surveyQuestions.length) {
-            console.log("In the first if statement");
             return false;
         }
         if (scores.length != surveyQuestionsWrapper.surveyQuestions.length) {
-            console.log("In the second if statement");
             return false;
         }
         // check that the responded questions are in the list of survey questions
         for (uint i = 0; i < questions.length; i++) {
             string memory question = questions[i];
             if (!surveyQuestionsWrapper.surveyQuestionsMap[question]) {
-                console.log("In the third if statement");
                 return false;
             }
         }
@@ -159,7 +151,6 @@ contract Survey is Ownable {
     // This function will be used to retrieve results
     function calcAverageScorePerQuestion() public {
         if (!shouldUpdateSurveyScores) {
-            console.log("Do not need to update survey score");
             return;
         }
         // remove all average scores stored in array
@@ -171,11 +162,10 @@ contract Survey is Ownable {
             uint averageScore = Utils.getArraySum(questionToScoreList[question]) / numRespondents;
             surveyScores.push(averageScore);
         }
-        console.log("Complete updating survey score");
         shouldUpdateSurveyScores = false;
     }
 
-    function getSurveyScores() public view onlyOwner hasSemaphore returns(string[] memory _surveyQuestions, uint[] memory _surveyScores) {
+    function getSurveyScores() public view hasSemaphore returns(string[] memory _surveyQuestions, uint[] memory _surveyScores) {
         return (surveyQuestionsWrapper.surveyQuestions, surveyScores);
     }
 

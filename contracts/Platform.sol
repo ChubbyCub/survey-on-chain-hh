@@ -19,9 +19,6 @@ contract Platform {
         if (surveyResultViews[msg.sender] == SurveyResultsView(address(0))) {
             // create one instance of survey result view for a creator
             createSurveyResultView(msg.sender);
-            console.log("Result view address", address(surveyResultViews[msg.sender]));
-        } else {
-            console.log("Not creating duplicate view");
         }
     }
 
@@ -45,13 +42,12 @@ contract Platform {
         signInAsSurveyor();
         SurveyResultsView resultsView = surveyResultViews[msg.sender];
 
-        console.log("Adding survey to results view");
         resultsView.addSurvey(ISurvey(newSurveyAddress));
         for (uint i = 0; i < _participants.length; i++) {
             address participant = _participants[i];
             surveyBuffer[participant].push(ISurvey(newSurveyAddress));
         }
-        console.log("Completed adding survey to results view");
+
         return address(newSurveyAddress);
     }
 

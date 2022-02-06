@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 import { SnarkConstants } from "./SnarkConstants.sol";
 import { MiMCHasher } from "./MiMCHasher.sol";
-import "hardhat/console.sol";
 
 abstract contract IncrementalMerkleTree is SnarkConstants {
     // The maximum tree depth
@@ -86,7 +85,6 @@ abstract contract IncrementalMerkleTree is SnarkConstants {
      * @return The leaf index.
      */
     function insertLeaf(uint256 _leaf) internal returns (uint256) {
-        console.log("insertLeaf: ", _leaf);
         require(
             _leaf < SNARK_SCALAR_FIELD,
             "IncrementalMerkleTree: insertLeaf argument must be < SNARK_SCALAR_FIELD"
@@ -124,7 +122,6 @@ abstract contract IncrementalMerkleTree is SnarkConstants {
         }
 
         root = currentLevelHash;
-        console.log("insertLeaf ROOT: ", root);
         rootHistory[root] = true;
 
         uint256 n = nextLeafIndex;
